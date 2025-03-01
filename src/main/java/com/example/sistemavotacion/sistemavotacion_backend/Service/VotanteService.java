@@ -42,7 +42,7 @@ public Votante crearVotante(Votante votante) throws Exception {
 
     private boolean esColombiano(String nacionalidad) {
         // Compara ignorando mayúsculas/minúsculas
-        return "Colombiano".equalsIgnoreCase(nacionalidad);
+        return "Colombiana".equalsIgnoreCase(nacionalidad);
     }
 
 
