@@ -12,6 +12,7 @@ import java.util.List;
 @RequestMapping("/api/votantes")
 public class VotanteController {
 
+
     @Autowired
     private VotanteService votanteService;
 
@@ -31,9 +32,16 @@ public class VotanteController {
 
     // Crear un nuevo votante
     @PostMapping
-    public Votante crearVotante(@RequestBody Votante votante) {
-        return votanteService.crearVotante(votante);
+    public ResponseEntity<?> crearVotante(@RequestBody Votante votante) {
+        try {
+            Votante nuevoVotante = votanteService.crearVotante(votante);
+            return ResponseEntity.ok(nuevoVotante);
+        } catch (Exception e) {
+            // Puedes retornar un mensaje de error y un código de estado HTTP adecuado, por ejemplo:
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
+    
 
     // Actualizar un votante existente
     @PutMapping("/{cedula}")

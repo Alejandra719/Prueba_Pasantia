@@ -23,9 +23,7 @@ public class VotoService {
     }
 
     public Voto crearVoto(Voto voto) {
-        // Aquí podrías agregar validaciones adicionales, por ejemplo:
-        // - Verificar que la elección esté activa.
-        // - Comprobar que el votante no haya votado ya en la elección.
+   
         return votoRepository.save(voto);
     }
 
@@ -40,5 +38,19 @@ public class VotoService {
 
     public void eliminarVoto(Integer id) {
         votoRepository.deleteById(id);
+    }
+
+    public List<Object[]> obtenerConteoVotosPorCandidato() {
+        // Devuelve la lista de [cedulaCandidato, totalVotos]
+        return votoRepository.contarVotosPorCandidato();
+    }
+
+    public Object[] obtenerCandidatoConMasVotos() {
+        List<Object[]> resultados = votoRepository.contarVotosPorCandidato();
+        if (!resultados.isEmpty()) {
+            // El primer elemento tendrá el mayor conteo gracias al ORDER BY DESC
+            return resultados.get(0);
+        }
+        return null;
     }
 }

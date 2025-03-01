@@ -5,7 +5,8 @@ import com.example.sistemavotacion.sistemavotacion_backend.repository.VotanteRep
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,22 +24,35 @@ public class VotanteService {
         return votanteRepository.findById(cedula);
     }
 
-    public Votante crearVotante(Votante votante) {
-        // agregar validaciones: edad, nacionalidad, etc.
-        return votanteRepository.save(votante);
+public Votante crearVotante(Votante votante) throws Exception {
+    if (!esMayorDeEdad(votante.getFechaNacimiento())) {
+        throw new Exception("El votante debe ser mayor de 18 años");
     }
+    if (!esColombiano(votante.getNacionalidad())) {
+        throw new Exception("El votante debe ser colombiano");
+    }
+    return votanteRepository.save(votante);
+}
+
+    private boolean esMayorDeEdad(LocalDate fechaNacimiento) {
+        LocalDate hoy = LocalDate.now();
+        int edad = Period.between(fechaNacimiento, hoy).getYears();
+        return edad >= 18;
+    }
+
+    private boolean esColombiano(String nacionalidad) {
+        // Compara ignorando mayúsculas/minúsculas
+        return "Colombiano".equalsIgnoreCase(nacionalidad);
+    }
+
 
     public Votante actualizarVotante(String cedula, Votante votanteActualizado) {
         return votanteRepository.findById(cedula).map(votante -> {
             votante.setNombre(votanteActualizado.getNombre());
             votante.setApellido(votanteActualizado.getApellido());
             votante.setFechaNacimiento(votanteActualizado.getFechaNacimiento());
-            // Otros campos...
             return votanteRepository.save(votante);
-        }).orElseGet(() -> {
-            // Opcional: manejar el caso de no encontrar el votante
-            return null;
-        });
+        }).orElse(null);
     }
 
     public void eliminarVotante(String cedula) {

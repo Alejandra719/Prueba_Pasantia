@@ -28,9 +28,14 @@ public class VotoController {
     }
 
     @PostMapping
-    public Voto crearVoto(@RequestBody Voto voto) {
-        return votoService.crearVoto(voto);
-    }
+    public ResponseEntity<?> crearVoto(@RequestBody Voto voto) {
+        try {
+            Voto nuevoVoto = votoService.crearVoto(voto);
+            return ResponseEntity.ok(nuevoVoto);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }    
 
     @PutMapping("/{id}")
     public ResponseEntity<Voto> actualizarVoto(@PathVariable Integer id,
@@ -46,5 +51,20 @@ public class VotoController {
     public ResponseEntity<Void> eliminarVoto(@PathVariable Integer id) {
         votoService.eliminarVoto(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/conteo")
+    public ResponseEntity<List<Object[]>> obtenerConteo() {
+        List<Object[]> conteo = votoService.obtenerConteoVotosPorCandidato();
+        return ResponseEntity.ok(conteo);
+    }
+
+    @GetMapping("/ganador")
+    public ResponseEntity<Object[]> obtenerGanador() {
+        Object[] ganador = votoService.obtenerCandidatoConMasVotos();
+        if (ganador == null) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(ganador);
     }
 }
